@@ -1,23 +1,46 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
+  const [userList, setUserList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getUser = () => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+      .then(res => {
+        setLoading(false);
+        setUserList(res)
+      })
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {
+        loading ? "loading.." :
+          userList.map((user) => {
+            return (
+              <div className='user-card'>
+                <div>
+                  <img src={`https://avatars.dicebear.com/v2/avataaars/${user.username}.svg?options[mood][]=happy`} width={200} />
+                </div>
+                <div>
+                  <div className='name'>{user.name}</div>
+                  <div className='details'><b>Email:</b> {user.email}</div>
+                  <div className='details'><b>Phone:</b> {user.phone}</div>
+                  <div className='details'><b>Company:</b> {user.company.name}</div>
+                  <div className='details'><b>Website:</b> {user.website}</div>
+                  <div className='details'><b>Address:</b> {`${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}`}</div>
+                </div>
+              </div>
+            )
+
+          })
+      }
     </div>
   );
 }
